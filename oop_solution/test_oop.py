@@ -87,9 +87,9 @@ def test_library_system():
     
     print("\nAll Members and Their Books:")
     for member in members:
-        print(f"\n{member['name']} ({member['id']}):")
-        if member['borrowed_books']:
-            for book_id in member['borrowed_books']:
+        print(f"\n{member.name} ({member.id}):")
+        if member.borrowed_list:
+            for book_id in member.borrowed_list:
                 book = find_book(book_id)
                 print(f"  - {book.title}")
         else:

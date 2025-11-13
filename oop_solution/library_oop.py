@@ -8,6 +8,13 @@ class Book:
         self.available_copies = available_copies
         self.total_copies = available_copies
 
+class Member:
+    def __init__(self,id, name, email, borrowed_list):
+        self.id = id
+        self.name = name
+        self.email = email
+        self.borrowed_list = borrowed_list
+
 books = []
 members = []
 borrowed_books = []
@@ -18,13 +25,7 @@ def add_book(book_id, title, author, available_copies):
 
 def add_member(member_id, name, email):
     """Register a new library member"""
-    member = {
-        'id': member_id,
-        'name': name,
-        'email': email,
-        'borrowed_books': []
-    }
-    members.append(member)
+    members.append(Member(member_id, name, email,[]))
     print(f"Member '{name}' registered successfully!")
 
 def find_book(book_id):
@@ -37,7 +38,7 @@ def find_book(book_id):
 def find_member(member_id):
     """Find a member by ID"""
     for member in members:
-        if member['id'] == member_id:
+        if member.id == member_id:
             return member
     return None
 
@@ -58,23 +59,23 @@ def borrow_book(member_id, book_id):
         print("Error: No copies available!")
         return False
     
-    if len(member['borrowed_books']) >= 3:
+    if len(member.borrowed_list) >= 3:
         print("Error: Member has reached borrowing limit!")
         return False
     
     # Process the borrowing
     book.available_copies -= 1
-    member['borrowed_books'].append(book_id)
+    member.borrowed_list.append(book_id)
     
     transaction = {
         'member_id': member_id,
         'book_id': book_id,
-        'member_name': member['name'],
+        'member_name': member.name,
         'book_title': book.title
     }
     borrowed_books.append(transaction)
     
-    print(f"{member['name']} borrowed '{book.title}'")
+    print(f"{member.name} borrowed '{book.title}'")
     return True
 
 def return_book(member_id, book_id):
@@ -86,13 +87,13 @@ def return_book(member_id, book_id):
         print("Error: Member or book not found!")
         return False
     
-    if book_id not in member['borrowed_books']:
+    if book_id not in member.borrowed_list:
         print("Error: This member hasn't borrowed this book!")
         return False
     
     # Process the return
     book.available_copies += 1
-    member['borrowed_books'].remove(book_id)
+    member.borrowed_list.remove(book_id)
     
     # Remove from borrowed_books list
     for i, transaction in enumerate(borrowed_books):
@@ -100,7 +101,7 @@ def return_book(member_id, book_id):
             borrowed_books.pop(i)
             break
     
-    print(f"{member['name']} returned '{book.title}'")
+    print(f"{member.name} returned '{book.title}'")
     return True
 
 def display_available_books():
@@ -117,11 +118,11 @@ def display_member_books(member_id):
         print("Error: Member not found!")
         return
     
-    print(f"\n=== Books borrowed by {member['name']} ===")
-    if not member['borrowed_books']:
+    print(f"\n=== Books borrowed by {member.name} ===")
+    if not member.borrowed_list:
         print("No books currently borrowed")
     else:
-        for book_id in member['borrowed_books']:
+        for book_id in member.borrowed_list:
             book = find_book(book_id)
             if book:
                 print(f"- {book.title} by {book.author}")
